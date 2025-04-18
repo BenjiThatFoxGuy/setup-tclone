@@ -17,7 +17,7 @@ jobs:
       - name: Get past secret value
         run: echo $rclone_config | base64 -d
         env:
-          rclone_config: ${{ matrix.os == 'macos-latest' && secrets.RCLONE_CONFIG_UPDATE_TEST_MACOS || secrets.RCLONE_CONFIG_UPDATE_TEST_UBUNTU }}
+          rclone_config: ${{ matrix.os == 'macos-latest' && secrets.RCLONE_CONFIG_B64_UPDATE_TEST_MACOS || secrets.RCLONE_CONFIG_B64_UPDATE_TEST_UBUNTU }}
           
       - name: Get new secret value
         run: |
@@ -26,9 +26,9 @@ jobs:
           echo $rclone_config | tee ~/.config/rclone/rclone.conf
           
       - name: Update Rclone config using setup-rclone/update-config
-        uses: AnimMouse/setup-rclone/update-config@main
+        uses: BenjiThatFoxGuy/setup-tclone/update-config@main
         with:
-          rclone_config_secret_name: ${{ matrix.os == 'macos-latest' && 'RCLONE_CONFIG_UPDATE_TEST_MACOS' || 'RCLONE_CONFIG_UPDATE_TEST_UBUNTU' }}
+          rclone_config_secret_name: ${{ matrix.os == 'macos-latest' && 'RCLONE_CONFIG_B64_UPDATE_TEST_MACOS' || 'RCLONE_CONFIG_B64_UPDATE_TEST_UBUNTU' }}
           token: ${{ secrets.GH_PAT }}
           
   test-windows:
@@ -37,7 +37,7 @@ jobs:
       - name: Get past secret value
         run: '[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:rclone_config))'
         env:
-          rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_WINDOWS }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG_B64_UPDATE_TEST_WINDOWS }}
           
       - name: Get new secret value
         run: |
@@ -47,7 +47,7 @@ jobs:
           [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", [Text.Encoding]::UTF8.GetBytes($rclone_config))
           
       - name: Update Rclone config using setup-rclone/update-config
-        uses: AnimMouse/setup-rclone/update-config@main
+        uses: BenjiThatFoxGuy/setup-tclone/update-config@main
         with:
-          rclone_config_secret_name: RCLONE_CONFIG_UPDATE_TEST_WINDOWS
+          rclone_config_secret_name: RCLONE_CONFIG_B64_UPDATE_TEST_WINDOWS
           token: ${{ secrets.GH_PAT }}
